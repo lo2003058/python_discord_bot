@@ -14,14 +14,17 @@ class React(Cog_Extension):
     async def seed(self, ctx):
         count = 0
 
+        await ctx.send(ctx.author.mention)
+        time.sleep(0.5)
+
         for image_data in jdata['images']:
             count = count + 1
             image = discord.File(image_data)
             await ctx.send(file=image)
-            time.sleep(1)
+            time.sleep(0.5)
 
         time.sleep(5)
-        await ctx.channel.purge(limit=count)
+        await ctx.channel.purge(limit=count+1)
 
     @commands.command()
     async def live(self, ctx, num=6):

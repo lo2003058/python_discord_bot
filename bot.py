@@ -17,18 +17,21 @@ async def on_ready():
 @bot.command()
 async def load(ctx, extension):
     bot.load_extension(F'cmds.{extension}')
+    await ctx.channel.purge(limit=1)
     await ctx.send(F'Loaded {extension} done.')
 
 
 @bot.command()
 async def unload(ctx, extension):
     bot.unload_extension(F'cmds.{extension}')
+    await ctx.channel.purge(limit=1)
     await ctx.send(F'Unloaded {extension} done.')
 
 
 @bot.command()
 async def reload(ctx, extension):
     bot.reload_extension(F'cmds.{extension}')
+    await ctx.channel.purge(limit=1)
     await ctx.send(F'Reloaded {extension} done.')
 
 
