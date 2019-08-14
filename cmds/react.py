@@ -13,8 +13,8 @@ class React(Cog_Extension):
     @commands.command()
     async def seed(self, ctx):
         count = 0
-
-        await ctx.send(ctx.author.mention)
+        emoji = '<:lm4:283490996749205506>'
+        await ctx.send(ctx.author.mention, context=F"{emoji}")
         time.sleep(0.5)
 
         for image_data in jdata['images']:
@@ -24,11 +24,15 @@ class React(Cog_Extension):
             time.sleep(0.5)
 
         time.sleep(5)
-        await ctx.channel.purge(limit=count+1)
+        await ctx.channel.purge(limit=count + 1)
 
     @commands.command()
     async def live(self, ctx, num=6):
-        await ctx.send(F'https://ncehk2019.github.io/nce-live/?visibleCount={num}')
+        if num > 24:
+            num = 24
+            emoji = '<:lm3:283490996963115008>'
+            await ctx.send(F'光復香港 時代革命{emoji}')
+            await ctx.send(F'https://ncehk2019.github.io/nce-live/?visibleCount={num}')
 
 
 def setup(bot):

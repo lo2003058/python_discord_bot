@@ -24,7 +24,10 @@ class Event(Cog_Extension):
             string = '老婆3P'
             emoji = '<:lm24:567189614775762951>'
             await channel.send(F"{string} {emoji}")
-
+        elif message.content == "光復香港":
+            string = '時代革命'
+            emoji = '<:lm3:283490996963115008>'
+            await channel.send(F"{string} {emoji}")
 
 def setup(bot):
     bot.add_cog(Event(bot))

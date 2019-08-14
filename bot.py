@@ -16,23 +16,38 @@ async def on_ready():
 
 @bot.command()
 async def load(ctx, extension):
-    bot.load_extension(F'cmds.{extension}')
-    await ctx.channel.purge(limit=1)
-    await ctx.send(F'Loaded {extension} done.')
+    if jdata['roles']['Bot Tester'] in [str(role.id) for role in ctx.author.roles]:
+        bot.load_extension(F'cmds.{extension}')
+        await ctx.channel.purge(limit=1)
+        emoji = '<:lm23:567189028131045401>'
+        await ctx.send(F'幫你Load好{extension}了{emoji} ')
+    else:
+        emoji = '<:lm8:283490997059715073>'
+        await ctx.send(F'你係冇特權,冇得大撚哂{emoji}')
 
 
 @bot.command()
 async def unload(ctx, extension):
-    bot.unload_extension(F'cmds.{extension}')
-    await ctx.channel.purge(limit=1)
-    await ctx.send(F'Unloaded {extension} done.')
+    if jdata['roles']['Bot Tester'] in [str(role.id) for role in ctx.author.roles]:
+        bot.unload_extension(F'cmds.{extension}')
+        await ctx.channel.purge(limit=1)
+        emoji = '<:lm23:567189028131045401>'
+        await ctx.send(F'幫你Unload咗{extension}了{emoji}')
+    else:
+        emoji = '<:lm8:283490997059715073>'
+        await ctx.send(F'你係冇特權,冇得大撚哂{emoji}')
 
 
 @bot.command()
 async def reload(ctx, extension):
-    bot.reload_extension(F'cmds.{extension}')
-    await ctx.channel.purge(limit=1)
-    await ctx.send(F'Reloaded {extension} done.')
+    if jdata['roles']['Bot Tester'] in [str(role.id) for role in ctx.author.roles]:
+        bot.reload_extension(F'cmds.{extension}')
+        await ctx.channel.purge(limit=1)
+        emoji = '<:lm23:567189028131045401>'
+        await ctx.send(F'幫你Reload咗{extension}了{emoji}')
+    else:
+        emoji = '<:lm8:283490997059715073>'
+        await ctx.send(F'你係冇特權,冇得大撚哂{emoji}')
 
 
 for filename in os.listdir('./cmds'):
