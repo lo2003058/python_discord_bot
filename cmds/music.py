@@ -21,6 +21,7 @@ class Music(Cog_Extension):
         # ------------------------------------connect ------------------------------------------------------#
         global voice
         channel = ctx.message.author.voice.channel
+
         voice = get(self.bot.voice_clients, guild=ctx.guild)
         if voice and voice.is_connected():
             await voice.move_to(channel)
@@ -34,7 +35,8 @@ class Music(Cog_Extension):
                 os.remove(path)
 
         except PermissionError:
-            await ctx.send(F"try to delete song file,but it's being playing")
+            emoji = '<:lm13:283490998011559937>'
+            await ctx.send(F"排完隊之後仲要先到先得呀{emoji}")
             return
 
         voice = get(self.bot.voice_clients, guild=ctx.guild)
@@ -52,30 +54,29 @@ class Music(Cog_Extension):
             print("Downloading audio now\n")
             ydl.download([url])
 
-        for file in os.listdir("./music/youtube"):
+        for file in os.listdir("./"):
             if file.endswith(".mp3"):
                 name = file
                 os.rename(file, './music/youtube/song.mp3')
-       # ------------------------------------------ play ----------------------------------------------------#
-        voice.play(discord.FFmpegPCMAudio("./music/youtube/song.mp3"), after=lambda e: print(f"{name} has finished playing"))
-        voice.source = discord.PCMVolumeTransformer(voice.source)
-        voice.source.volume = 0.5
-
+        # ------------------------------------------ play ----------------------------------------------------#
         nname = name.rsplit("-", 2)
-        await ctx.send(f"Playing: {nname[0]} - {nname[1]}")
 
+        voice.play(discord.FFmpegPCMAudio("./music/youtube/song.mp3"),
+                   after=lambda e: print(f"{nname[0]}-{nname[1]} has finished playing"))
+        voice.source = discord.PCMVolumeTransformer(voice.source)
 
-@commands.command()
-async def leave(self, ctx):
-    global voice
-    # channel = ctx.message.author.voice.channel
+        await ctx.send(f"Playing: {nname[0]}-{nname[1]}")
 
-    # <discord.voice_client.VoiceClient object at 0x00000000054B4F28>
-    voice = get(self.bot.voice_clients, guild=ctx.guild)
+    @commands.command()
+    async def leave(self, ctx):
+        global voice
+        # channel = ctx.message.author.voice.channel
+        # <discord.voice_client.VoiceClient object at 0x00000000054B4F28>
+        voice = get(self.bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_connected():
-        print(voice)
-        await voice.disconnect()
+        if voice and voice.is_connected():
+            print(voice)
+            await voice.disconnect()
 
 
 def setup(bot):
