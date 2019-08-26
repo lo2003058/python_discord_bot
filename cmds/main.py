@@ -39,5 +39,7 @@ class Main(Cog_Extension):
             await ctx.send(F'你係冇特權,冇得大撚哂{emoji}')
 
 
+
+
 def setup(bot):
     bot.add_cog(Main(bot))

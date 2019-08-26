@@ -38,7 +38,7 @@ async def unload(ctx, extension):
         await ctx.send(F'你係冇特權,冇得大撚哂{emoji}')
 
 
-@bot.command()
+@bot.command(aliases=["re"])
 async def reload(ctx, extension):
     if jdata['roles']['Bot Tester'] in [str(role.id) for role in ctx.author.roles]:
         bot.reload_extension(F'cmds.{extension}')
