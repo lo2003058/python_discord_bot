@@ -16,7 +16,7 @@ queues = {}
 
 class Music(Cog_Extension):
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, aliases=["p"])
     async def play(self, ctx, url: str = ""):
 
         def check_queue():
@@ -25,39 +25,70 @@ class Music(Cog_Extension):
                 dir = "./music/queue"
                 length = len(os.listdir(dir))
                 still_q = length - 1
+                print(os.listdir(dir)[0])
                 try:
                     first_file = os.listdir(dir)[0]
+                    print('first_file = ' + first_file)
                 except:
-                    print("No more queued song\n")
                     queues.clear()
                     return
-                main_location = os.path.dirname(os.path.realpath(__file__))
-                song_path = "./music/queue" + "\\" + first_file
+                main_location = "./music/youtube"
+                song_path = "./music/queue" + "/" + first_file
                 if length != 0:
                     print("Song done,playing next queued\n")
                     song_there = os.path.isfile('./music/youtube/song.mp3')
                     if song_there:
                         os.remove('./music/youtube/song.mp3')
                     shutil.move(song_path, main_location)
-                    for file in os.listdir("./music/queue"):
+                    for file in os.listdir("./music/youtube"):
                         if file.endswith(".mp3"):
-                            os.rename(file, "song.mp3")
+                            os.rename('./music/youtube/' + file, './music/youtube/song.mp3')
 
-                    voice.play(discord.FFmpegPCMAudio("./music/queue/song.mp3"),
+                    voice.play(discord.FFmpegPCMAudio('./music/youtube/song.mp3'),
                                after=lambda e: check_queue())
                     voice.source = discord.PCMVolumeTransformer(voice.source)
 
                 else:
                     queues.clear()
                     return
-
             else:
                 queues.clear()
+
+        def add_to_queue():
+            Queue_infile = os.path.isdir("./music/queue")
+            print(Queue_infile)
+            if Queue_infile is False:
+                os.mkdir("./music/queue")
+            dir = "./music/queue"
+            q_num = len(os.listdir(dir))
+            q_num += 1
+            add_queue = True
+            while add_queue:
+                if q_num in queues:
+                    q_num += 1
+                else:
+                    add_queue = False
+                    queues[q_num] = q_num
+
+            queue_path = "./music/queue" + f"\song{q_num}.%(ext)s"
+
+            ydl_opts = {
+                'format': 'bestaudio/best',
+                'outtmpl': queue_path,
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
+            }
+
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                print("Downloading audio now\n")
+                ydl.download([url])
 
         # ------------------------------------connect ------------------------------------------------------#
         global voice
         channel = ctx.message.author.voice.channel
-
         voice = get(self.bot.voice_clients, guild=ctx.guild)
         if voice and voice.is_connected():
             await voice.move_to(channel)
@@ -71,8 +102,9 @@ class Music(Cog_Extension):
                 os.remove(path)
                 queues.clear()
         except PermissionError:
-            emoji = '<:lm13:283490998011559937>'
-            await ctx.send(F"排完隊之後仲要先到先得呀{emoji}")
+            add_to_queue()
+            emoji = '<:lm20:567188297638608914>'
+            await ctx.send(F"加咗入條list,排緊隊{emoji}")
             return
 
         queue_infile = os.path.isdir("./music/queue")
@@ -110,7 +142,44 @@ class Music(Cog_Extension):
                    after=lambda e: check_queue())
         voice.source = discord.PCMVolumeTransformer(voice.source)
 
-        await ctx.send(f"Playing: {nname[0]}-{nname[1]}")
+        #await ctx.send(f"播緊 : {nname[0]}-{nname[1]}")
+
+    @commands.command(pass_context=True, aliases=["q"])
+    async def queue(self, ctx, url: str = ""):
+        Queue_infile = os.path.isdir("./music/queue")
+        print(Queue_infile)
+        if Queue_infile is False:
+            os.mkdir("./music/queue")
+        dir = "./music/queue"
+        # dir = os.path.path("./music/queue")
+        q_num = len(os.listdir(dir))
+        q_num += 1
+        add_queue = True
+        while add_queue:
+            if q_num in queues:
+                q_num += 1
+            else:
+                add_queue = False
+                queues[q_num] = q_num
+
+        queue_path = "./music/queue" + f"\song{q_num}.%(ext)s"
+
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': queue_path,
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            print("Downloading audio now\n")
+            ydl.download([url])
+        await ctx.send("加咗入條list,排緊隊")
+
+        print("song added to queue\n")
 
     @commands.command()
     async def leave(self, ctx):
@@ -156,47 +225,10 @@ class Music(Cog_Extension):
         if voice and voice.is_playing():
             print('Music stopped')
             voice.stop()
-            await ctx.send('Music stopped')
+            await ctx.send('歌已停')
         else:
             print("no msuic to stop")
-            await ctx.send('no msuic to stop')
-
-    @commands.command(pass_context=True, aliases=["q"])
-    async def queue(self, ctx, url: str = ""):
-        Queue_infile = os.path.isdir("./music/queue")
-        print(Queue_infile)
-        if Queue_infile is False:
-            os.mkdir("./music/queue")
-        dir = "./music/queue"
-        # dir = os.path.path("./music/queue")
-        q_num = len(os.listdir(dir))
-        q_num += 1
-        add_queue = True
-        while add_queue:
-            if q_num in queues:
-                q_num += 1
-            else:
-                add_queue = False
-                queues[q_num] = q_num
-
-        queue_path = "./music/queue" + f"\song{q_num}.%(ext)s"
-
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'outtmpl': queue_path,
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-        }
-
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            print("Downloading audio now\n")
-            ydl.download([url])
-        await ctx.send("Adding song " + str(q_num) + " to the queue")
-
-        print("song added to queue\n")
+            await ctx.send('無歌點停')
 
 
 def setup(bot):
