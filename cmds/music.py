@@ -74,7 +74,7 @@ class Music(Cog_Extension):
 
             ydl_opts = {
                 'format': 'bestaudio/best',
-                #'outtmpl': queue_path,
+                # 'outtmpl': queue_path,
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
@@ -143,6 +143,7 @@ class Music(Cog_Extension):
                 name = file
                 os.rename(file, './music/youtube/song.mp3')
         # ------------------------------------------ play ----------------------------------------------------#
+
         nname = name.rsplit("-", 2)
         music_playlist.append(nname[0] + '-' + nname[1])
         voice.play(discord.FFmpegPCMAudio("./music/youtube/song.mp3"),
@@ -154,7 +155,7 @@ class Music(Cog_Extension):
     @commands.command(pass_context=True, aliases=["ml"])
     async def musiclist(self, ctx):
 
-        #testlist = ['美波「ライラック」MV-GQ3V50XoLOM.mp3', '美波「ホロネス」MV-HIRiduzNLzQ.mp3', '美波「カワキヲアメク」MV-0YF8vecQWYs.mp3']
+        # testlist = ['美波「ライラック」MV-GQ3V50XoLOM.mp3', '美波「ホロネス」MV-HIRiduzNLzQ.mp3', '美波「カワキヲアメク」MV-0YF8vecQWYs.mp3']
 
         count = 0
         if music_playlist:
@@ -226,43 +227,6 @@ class Music(Cog_Extension):
         else:
             print("no msuic to stop")
             await ctx.send('無歌點Cut')
-
-    # @commands.command(pass_context=True, aliases=["q"])
-    # async def queue(self, ctx, url: str = ""):
-    #     Queue_infile = os.path.isdir("./music/queue")
-    #     print(Queue_infile)
-    #     if Queue_infile is False:
-    #         os.mkdir("./music/queue")
-    #     dir = "./music/queue"
-    #     # dir = os.path.path("./music/queue")
-    #     q_num = len(os.listdir(dir))
-    #     q_num += 1
-    #     add_queue = True
-    #     while add_queue:
-    #         if q_num in queues:
-    #             q_num += 1
-    #         else:
-    #             add_queue = False
-    #             queues[q_num] = q_num
-    #
-    #     queue_path = "./music/queue" + f"\song{q_num}.%(ext)s"
-    #
-    #     ydl_opts = {
-    #         'format': 'bestaudio/best',
-    #         'outtmpl': queue_path,
-    #         'postprocessors': [{
-    #             'key': 'FFmpegExtractAudio',
-    #             'preferredcodec': 'mp3',
-    #             'preferredquality': '192',
-    #         }],
-    #     }
-    #
-    #     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-    #         print("Downloading audio now\n")
-    #         ydl.download([url])
-    #     await ctx.send("加咗入條list,排緊隊")
-    #
-    #     print("song added to queue\n")
 
 
 def setup(bot):
