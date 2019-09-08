@@ -39,11 +39,12 @@ class Music(Cog_Extension):
                     if song_there:
                         os.remove('./music/youtube/song.mp3')
                     shutil.move(song_path, main_location)
-                    music_playlist.pop(0)
+
                     for file in os.listdir("./music/youtube"):
                         if file.endswith(".mp3"):
                             os.rename('./music/youtube/' + file, './music/youtube/song.mp3')
 
+                    music_playlist.pop(0)
                     voice.play(discord.FFmpegPCMAudio('./music/youtube/song.mp3'),
                                after=lambda e: check_queue())
                     voice.source = discord.PCMVolumeTransformer(voice.source)
@@ -85,13 +86,14 @@ class Music(Cog_Extension):
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 print("Downloading audio now\n")
                 ydl.download([url])
+                info = ydl.extract_info(url)
 
             for file in os.listdir('./'):
                 if file.endswith(".mp3"):
                     name = file
                     os.rename(file, f'./music/queue/song{q_num}.mp3')
             nname = name.rsplit("-", 2)
-            music_playlist.append(nname[0] + '-' + nname[1])
+            music_playlist.append(info['title'])
 
         # ------------------------------------connect ------------------------------------------------------#
         global voice
@@ -137,6 +139,7 @@ class Music(Cog_Extension):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             print("Downloading audio now\n")
             ydl.download([url])
+            info = ydl.extract_info(url)
 
         for file in os.listdir("./"):
             if file.endswith(".mp3"):
@@ -145,7 +148,7 @@ class Music(Cog_Extension):
         # ------------------------------------------ play ----------------------------------------------------#
 
         nname = name.rsplit("-", 2)
-        music_playlist.append(nname[0] + '-' + nname[1])
+        music_playlist.append(info['title'])
         voice.play(discord.FFmpegPCMAudio("./music/youtube/song.mp3"),
                    after=lambda e: check_queue())
         voice.source = discord.PCMVolumeTransformer(voice.source)
